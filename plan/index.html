@@ -3,259 +3,306 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>移居英國寵物時間表計算器</title>
+    <title>BNO + 寵物移民 (經法國路線) 時間表生成器</title>
     <style>
-        /* 基本樣式設置，確保頁面在不同設備上都能良好顯示 */
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --warning-color: #e74c3c;
+            --success-color: #27ae60;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 20px;
-            padding: 0;
-            background-color: #f4f7f6;
-            color: #333;
+            font-family: "Microsoft JhengHei", "Heiti TC", sans-serif;
+            background-color: var(--bg-color);
+            color: var(--primary-color);
+            margin: 0;
+            padding: 20px;
             line-height: 1.6;
         }
-        /* 容器樣式，限制內容寬度並居中，增加陰影和圓角提升視覺效果 */
+
         .container {
             max-width: 900px;
-            margin: 30px auto;
-            background-color: #ffffff;
+            margin: 0 auto;
+            background: var(--card-bg);
             padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
-        /* 標題樣式 */
-        h1, h2 {
-            color: #2c3e50;
+
+        h1 {
             text-align: center;
-            margin-bottom: 25px;
+            color: var(--primary-color);
+            margin-bottom: 30px;
         }
-        /* 表單標籤樣式 */
+
+        .input-section {
+            background: #eef2f5;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 30px;
+            border-left: 5px solid var(--accent-color);
+        }
+
         label {
-            display: block;
-            margin-bottom: 8px;
+            font-size: 1.1em;
             font-weight: bold;
-            color: #555;
+            margin-right: 10px;
         }
-        /* 日期輸入框樣式 */
+
         input[type="date"] {
-            width: calc(100% - 22px); /* 調整寬度以適應內邊距和邊框 */
-            padding: 12px;
-            margin-bottom: 20px;
+            padding: 10px;
             border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-            box-sizing: border-box; /* 確保內邊距和邊框包含在元素總寬高內 */
+            border-radius: 4px;
+            font-size: 1em;
         }
-        /* 按鈕樣式 */
+
         button {
-            display: block;
-            width: 100%;
-            padding: 12px 20px;
-            background-color: #28a745; /* 綠色按鈕 */
+            background-color: var(--accent-color);
             color: white;
             border: none;
-            border-radius: 5px;
-            font-size: 18px;
+            padding: 10px 20px;
+            font-size: 1em;
+            border-radius: 4px;
             cursor: pointer;
-            transition: background-color 0.3s ease; /* 平滑過渡效果 */
-            margin-top: 10px;
+            margin-left: 10px;
+            transition: background 0.3s;
         }
+
         button:hover {
-            background-color: #218838; /* 滑鼠懸停時顏色變深 */
+            background-color: #2980b9;
         }
-        /* 結果顯示區域樣式 */
-        #results {
-            margin-top: 30px;
-            border-top: 1px solid #eee;
-            padding-top: 20px;
-        }
-        /* 表格樣式 */
-        table {
+
+        .timeline-table {
             width: 100%;
-            border-collapse: collapse; /* 合併邊框 */
+            border-collapse: collapse;
             margin-top: 20px;
+            display: none; /* Hidden by default */
         }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-            font-weight: bold;
-            color: #333;
-        }
-        /* 斑馬紋表格行 */
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        /* 提示信息框樣式 */
-        .note {
-            background-color: #fff3cd;
-            border-left: 5px solid #ffeeba;
+
+        .timeline-table th, .timeline-table td {
             padding: 15px;
-            margin-top: 20px;
-            border-radius: 5px;
-            color: #856404;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
         }
-        .note ul {
-            margin-bottom: 0;
-            padding-left: 20px;
+
+        .timeline-table th {
+            background-color: var(--primary-color);
+            color: white;
         }
-        /* 錯誤信息樣式 */
-        .error {
-            color: #dc3545;
+
+        .timeline-table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .category-tag {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
             font-weight: bold;
-            margin-top: 15px;
-            text-align: center;
+            color: white;
         }
-        /* 響應式設計：針對小屏幕設備調整樣式 */
-        @media (max-width: 768px) {
-            .container {
-                margin: 20px;
-                padding: 20px;
-            }
-            input[type="date"], button {
-                font-size: 14px;
+
+        .cat-human { background-color: #95a5a6; }
+        .cat-pet { background-color: #e67e22; }
+        .cat-admin { background-color: #9b59b6; }
+        .cat-critical { background-color: var(--warning-color); }
+
+        .note {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .highlight-date {
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+
+        @media (max-width: 600px) {
+            .timeline-table th, .timeline-table td {
                 padding: 10px;
+                font-size: 0.9em;
             }
-            th, td {
-                padding: 8px;
-                font-size: 14px;
+            .input-section {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
             }
+            button { margin-left: 0; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>移居英國寵物時間表計算器</h1>
-        <p class="note">
-            請輸入您的目標離境日期，此工具將根據您提供的資訊，為您計算出寵物和簽證準備的關鍵日期。
-            請注意，這是一個估算時間表，實際情況可能因個人申請進度、航空公司政策和政府處理時間而異。
-        </p>
 
-        <div>
-            <label for="targetLeaveDate">請選擇您的目標離境日期：</label>
-            <input type="date" id="targetLeaveDate">
-            <button onclick="calculateTimetable()">計算時間表</button>
-        </div>
-
-        <div id="results">
-            <!-- 計算出的時間表將顯示在這裡 -->
-        </div>
+<div class="container">
+    <h1>✈️ BNO + 寵物移民 (經法國) 時間表</h1>
+    
+    <div class="input-section">
+        <label for="departDate">請輸入你的目標出發日期：</label>
+        <input type="date" id="departDate">
+        <button onclick="generateSchedule()">生成時間表</button>
     </div>
 
-    <script>
-        /**
-         * 根據用戶輸入的目標離境日期計算並顯示移居時間表。
-         */
-        function calculateTimetable() {
-            const targetLeaveDateInput = document.getElementById('targetLeaveDate');
-            const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML = ''; // 清除之前的結果
+    <div id="resultArea">
+        <table class="timeline-table" id="scheduleTable">
+            <thead>
+                <tr>
+                    <th style="width: 15%">建議日期</th>
+                    <th style="width: 15%">倒數</th>
+                    <th style="width: 15%">類別</th>
+                    <th style="width: 55%">待辦事項</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- Rows will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+</div>
 
-            const targetDateStr = targetLeaveDateInput.value;
-
-            // 檢查是否已選擇日期
-            if (!targetDateStr) {
-                resultsDiv.innerHTML = '<p class="error">請先選擇一個目標離境日期。</p>';
-                return;
-            }
-
-            // 將輸入的日期字符串轉換為Date對象。
-            // 添加'T00:00:00'以確保日期解析時不會因時區問題導致日期偏移。
-            const targetDate = new Date(targetDateStr + 'T00:00:00');
-
-            // 檢查日期是否有效
-            if (isNaN(targetDate.getTime())) {
-                resultsDiv.innerHTML = '<p class="error">輸入的日期無效，請檢查。</p>';
-                return;
-            }
-
-            /**
-             * 格式化日期為「YYYY年MM月DD日」的形式。
-             * @param {Date} date - 要格式化的日期對象。
-             * @returns {string} 格式化後的日期字符串。
-             */
-            function formatDate(date) {
-                const year = date.getFullYear();
-                const month = (date.getMonth() + 1).toString().padStart(2, '0'); // 月份從0開始，所以要加1
-                const day = date.getDate().toString().padStart(2, '0');
-                return `${year}年${month}月${day}日`;
-            }
-
-            /**
-             * 給定日期添加或減去指定月數。
-             * 此函數會處理月份長度不一致導致的日期問題（例如，3月31日減1個月應為2月28/29日）。
-             * @param {Date} date - 原始日期。
-             * @param {number} months - 要添加（正數）或減去（負數）的月數。
-             * @returns {Date} 計算後的日期。
-             */
-            function addMonths(date, months) {
-                const d = new Date(date);
-                const originalDay = d.getDate(); // 記住原始日期中的天數
-                d.setMonth(d.getMonth() + months);
-
-                // 如果設置月份後，日期變了（例如，從3月31日變到2月28日），
-                // 則將日期設置為該月的最後一天。
-                if (d.getDate() !== originalDay) {
-                    d.setDate(0); // 將日期設置為上一個月的最後一天
-                }
-                return d;
-            }
-
-            /**
-             * 給定日期添加或減去指定天數。
-             * @param {Date} date - 原始日期。
-             * @param {number} days - 要添加（正數）或減去（負數）的天數。
-             * @returns {Date} 計算後的日期。
-             */
-            function addDays(date, days) {
-                const d = new Date(date);
-                d.setDate(d.getDate() + days);
-                return d;
-            }
-
-            // 根據目標離境日期計算各個關鍵時間點
-            const timetable = [
-                { action: '<b>目標離境日期</b>', date: targetDate },
-                { action: '<b>第一步：獸醫準備 (晶片植入及狂犬病疫苗接種開始)</b><br><small><i>（建議在離境前6個月開始，確保有充足時間完成所有程序，<b>晶片必須在疫苗前植入</b>）</i></small>', date: addMonths(targetDate, -6) },
-                { action: '狂犬病疫苗21天等待期結束 (最早可旅行日期)', date: addDays(targetDate, -21) },
-                { action: '<b>第二步：簽證及稅務減免 (BNO簽證及ToR1表格申請開始)</b><br><small><i>（建議在離境前4個月開始，簽證處理需時，ToR1表格亦需時間審批）</i></small>', date: addMonths(targetDate, -4) },
-                { action: '<b>第三步：預訂機票及寵物艙位 (開始)</b><br><small><i>（建議在離境前4個月開始，特別是寵物艙位數量有限，需提前與航空公司確認）</i></small>', date: addMonths(targetDate, -4) },
-                { action: '預訂寵物接送服務 (如果選擇經歐洲轉機，例如巴黎/阿姆斯特丹)', date: addMonths(targetDate, -4) },
-                { action: '<b>第四步：健康證明書 (獸醫檢查)</b><br><small><i>（必須在航班起飛前10天內由漁農自然護理署認可獸醫完成）</i></small>', date: addDays(targetDate, -10) },
-                { action: '文件認可 (漁農自然護理署蓋章)<br><small><i>（獸醫簽署後，需盡快送往漁農自然護理署辦事處蓋章，通常需時1天）</i></small>', date: addDays(targetDate, -9) },
-            ];
-
-            // 生成HTML表格來顯示時間表
-            let html = '<h2>您的移居英國寵物時間表</h2>';
-            html += '<table>';
-            html += '<thead><tr><th>行動</th><th>建議日期</th></tr></thead>';
-            html += '<tbody>';
-
-            timetable.forEach(item => {
-                html += `<tr><td>${item.action}</td><td>${formatDate(item.date)}</td></tr>`;
-            });
-
-            html += '</tbody>';
-            html += '</table>';
-
-            // 添加重要提示信息
-            html += '<div class="note">';
-            html += '<h3>重要提示：</h3>';
-            html += '<ul>';
-            html += '<li>此時間表僅供參考，實際日期可能因個人情況、航空公司政策及政府處理時間而異。</li>';
-            html += '<li><b>晶片植入必須在狂犬病疫苗接種之前完成。</b></li>';
-            html += '<li>狂犬病疫苗接種後需等待至少21天才能旅行。</li>';
-            html += '<li>健康證明書和漁農自然護理署蓋章必須在航班起飛前10天內完成並生效。</li>';
-            html += '<li>強烈建議您提早開始準備，並與相關機構（獸醫、航空公司、政府部門）確認最新要求。</li>';
-            html += '<li>如果您選擇經歐洲轉機，請務必確認所選航空公司允許寵物隨機艙或作為超重行李。</li>';
-            html += '</ul>';
-            html += '</div>';
-
-            resultsDiv.innerHTML = html;
+<script>
+    function generateSchedule() {
+        const dateInput = document.getElementById('departDate').value;
+        if (!dateInput) {
+            alert("請先選擇出發日期！");
+            return;
         }
-    </script>
+
+        const departDate = new Date(dateInput);
+        const tableBody = document.getElementById('tableBody');
+        const table = document.getElementById('scheduleTable');
+        
+        // Clear previous results
+        tableBody.innerHTML = "";
+        table.style.display = "table";
+
+        // Define tasks
+        // Offset is in days (negative means before departure)
+        const tasks = [
+            {
+                offset: -180,
+                category: "human",
+                title: "預約並進行 TB Test (結核病測試)",
+                note: "BNO Visa 必須文件。報告有效期為6個月，建議儘早做，但不要早於出發前6個月太多。"
+            },
+            {
+                offset: -150,
+                category: "pet",
+                title: "寵物：植入晶片 + 狂犬病疫苗 (Rabies)",
+                note: "【重要】必須先打晶片再打針。雖然法例要求只需21天，但建議提早做以防萬一。"
+            },
+            {
+                offset: -120,
+                category: "human",
+                title: "申請 BNO Visa",
+                note: "通常需時12週。取得 TB Test 報告後即可申請。"
+            },
+            {
+                offset: -100,
+                category: "pet",
+                title: "預訂機票 (人+寵物) 及 Pet Taxi",
+                note: "致電 KLM/Air France 確認有寵物機位才付款。同時預約從 CDG/AMS 到英國的 Pet Taxi (這類司機很搶手)。"
+            },
+            {
+                offset: -90,
+                category: "admin",
+                title: "處理強積金 (MPF) 及 銀行戶口",
+                note: "整合 MPF，開設離岸戶口或英國銀行戶口 (如 HSBC Expat/Monzo)。"
+            },
+            {
+                offset: -60,
+                category: "admin",
+                title: "申請 ToR1 (轉移居留免稅)",
+                note: "拿到 Visa 後申請。填表時記得將兩隻貓列入 'Goods' 以免被徵收 VAT。"
+            },
+            {
+                offset: -45,
+                category: "admin",
+                title: "預約搬屋公司 / 船運",
+                note: "決定哪些傢俬要運走，哪些要賣掉。"
+            },
+            {
+                offset: -30,
+                category: "admin",
+                title: "通知終止服務 (水/電/煤/寬頻)",
+                note: "預約截數日期。申請香港駕駛執照細節證明書 (用來換英國車牌)。"
+            },
+            {
+                offset: -14,
+                category: "pet",
+                title: "【關鍵】預約獸醫簽發健康證明書 (Health Cert)",
+                note: "必須預約在出發前 10 天內進行。告知獸醫你要經法國去英國，需要 **EU Health Cert** AND **GB Pet Health Cert**。"
+            },
+            {
+                offset: -10,
+                category: "critical",
+                title: "帶寵物見獸醫 (Final Check)",
+                note: "獸醫檢查、杜蟲 (雖然貓入英國不強制杜蟲，但部分航空公司或 EU 入境可能檢查，建議諮詢獸醫)、簽署文件。"
+            },
+            {
+                offset: -5,
+                category: "critical",
+                title: "前往漁護署 (AFCD) 加簽文件",
+                note: "帶齊獸醫簽好的文件去長沙灣政府合署加簽 (Endorsement)。通常即日或隔日可取。"
+            },
+            {
+                offset: -2,
+                category: "human",
+                title: "網上 Check-in / 整理行李",
+                note: "確認所有文件 (護照、Visa、TB Cert、寵物文件) 都在手提行李內。"
+            },
+            {
+                offset: 0,
+                category: "critical",
+                title: "出發日 (Departure Day) ✈️",
+                note: "提早 3-4 小時到達機場。祝你和貓貓旅途順利！"
+            }
+        ];
+
+        tasks.forEach(task => {
+            const taskDate = new Date(departDate);
+            taskDate.setDate(departDate.getDate() + task.offset);
+            
+            const dateStr = taskDate.toISOString().split('T')[0];
+            const dayOfWeek = taskDate.toLocaleDateString('zh-HK', { weekday: 'short' });
+            
+            let catLabel = "";
+            let catClass = "";
+            
+            switch(task.category) {
+                case "human": catLabel = "人類簽證"; catClass = "cat-human"; break;
+                case "pet": catLabel = "寵物移民"; catClass = "cat-pet"; break;
+                case "admin": catLabel = "行政雜務"; catClass = "cat-admin"; break;
+                case "critical": catLabel = "重要時刻"; catClass = "cat-critical"; break;
+            }
+
+            let countdownText = "";
+            if (task.offset === 0) {
+                countdownText = "當天";
+            } else {
+                countdownText = `出發前 ${Math.abs(task.offset)} 天`;
+            }
+
+            const row = `
+                <tr>
+                    <td><span class="highlight-date">${dateStr}</span><br>(${dayOfWeek})</td>
+                    <td>${countdownText}</td>
+                    <td><span class="category-tag ${catClass}">${catLabel}</span></td>
+                    <td>
+                        <strong>${task.title}</strong>
+                        <div class="note">${task.note}</div>
+                    </td>
+                </tr>
+            `;
+            tableBody.innerHTML += row;
+        });
+    }
+</script>
+
 </body>
 </html>
